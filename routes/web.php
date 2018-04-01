@@ -12,6 +12,6 @@
 */
 
 Route::get('/', function () {
-    //return view('welcome');
-    return '<h1>Heloo FOO</h1>';
+    return view('welcome') -> with('name', 'Foo');
+    //return '<h1>Heloo FOO</h1>';
 });
