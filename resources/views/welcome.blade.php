@@ -1,1 +1,5 @@
-<h1><?= isset($greeting) ? "{$greeting}" : 'Hello'?><?= $name;?></h1>
+@extends('layouts.master')
+
+@section('content')
+    <p>저는 자식 뷰의 'content' 섹션입니다.</p>
+@endsection

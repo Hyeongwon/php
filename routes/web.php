@@ -12,6 +12,12 @@
 */
 
 Route::get('/', function () {
-    return view('welcome') -> with('name', 'Foo');
+    //return view('welcome') -> with('name', 'Foo');
     //return '<h1>Heloo FOO</h1>';
+
+//    $item = ['apple', 'banana', 'tomato'];
+////
+////    return view('welcome', ['items' => $item]);
+///
+    return view('welcome');
 });
