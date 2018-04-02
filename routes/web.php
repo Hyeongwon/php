@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     //return view('welcome') -> with('name', 'Foo');
     //return '<h1>Heloo FOO</h1>';
 
@@ -20,4 +20,8 @@ Route::get('/', function () {
 ////    return view('welcome', ['items' => $item]);
 ///
     return view('welcome');
-});
+});*/
+
+//Route::get('/', 'WelcomeController@index');
+
+Route::resource('articles', 'ArticlesController');
