@@ -66,3 +66,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 
     var_dump($query->sql);
 });*/
+

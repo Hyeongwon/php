@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ArticlesRequest;
 
 class ArticlesController extends Controller
 {
@@ -37,7 +38,7 @@ class ArticlesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(\App\Http\Requests\ArticlesRequest $request)
     {
         //return __METHOD__. '은(는) 사용자의 입력한 폼 데이터로 새로운 Article 컬렉션을 만듭니다.';
 
@@ -74,7 +75,10 @@ class ArticlesController extends Controller
            return back() -> with('flash_message', '글이 저장되지 않았습니다.')
                ->withInput();
        }
-
+       event(new \App\Events\ArticlesEvent($article));
+       /*var_dump('이번트를 던집니다!');
+       event(new \App\Events\ArticleCreated($article));
+       var_dump('이번트를 던졌습니다.');*/
        return redirect(route('articles.index'))->with('flash_message', '작성하신 글이 저장 되었씁니다.');
     }
 
