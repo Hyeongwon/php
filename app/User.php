@@ -26,10 +26,19 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    protected $casts = [
+        'activated' => 'boolean',
+    ];
+
     protected  $dates = ['last_login'];
 
     public function articles() {
 
         return $this->hasMany(Article::class);
+    }
+
+    public function isAdmin() {
+
+        return ($this->id ===1 ) ? ture : false;
     }
 }

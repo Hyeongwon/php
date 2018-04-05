@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use function foo\func;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,5 +31,27 @@ class UsersEventListener
         $event->user->last_login = \Carbon\Carbon::now();
 
         return $event->user->save();
+    }
+
+    public function subscribe(\Illuminate\Events\Dispatcher $events) {
+
+        $events->listen(
+
+            \App\Events\UserCreated::class,
+            __CLASS__ . '@onUserCreated'
+        );
+    }
+
+    public function onUserCreated(\App\Events\UserCreated $event) {
+
+        $user = $event->user;
+        \Mail::send('emails.auth.confirm', compact('user'), function ($message) use
+        ($user) {
+
+            $message->to($user->email);
+            $message->subject(
+                springf('[%s]회원 가입을 확인해 주세요.', config('app.name'))
+            );
+        });
     }
 }

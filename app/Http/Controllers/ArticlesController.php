@@ -12,6 +12,12 @@ class ArticlesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' =>['index', 'show']]);
+    }
+
     public function index()
     {
         //$articles = \App\Article::with('user')->get(); 즉시로드
@@ -29,7 +35,9 @@ class ArticlesController extends Controller
     public function create()
     {
         //return __METHOD__. '은(는) Article 컬렉션을 만들기 위한 폼을 담은 뷰를 반환합니다.';
-        return view('articles.create');
+        $article = new \App\Article;
+
+        return view('articles.create', compact('article'));
     }
 
     /**
@@ -68,7 +76,8 @@ class ArticlesController extends Controller
         return redirect(route('articles.index'))
             ->with('flash_message', '작성하신 글이 저장되었습니다.');*/
 
-       $article = \App\User::find(1)->articles()->create($request->all());
+       //$article = \App\User::find(1)->articles()->create($request->all());
+        $article = $request->user()->articles()->create($request->all());
 
        if(! $article) {
 
@@ -88,13 +97,13 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(\App\Article $article)
     {
-        $article = \App\Article::findOrFail($id);
+        //$article = \App\Article::findOrFail($id);
 
         //return __METHOD__. '은(는) 다음 기본 키를 가진 Article 모델을 조회합니다.'. $id;
-        debug($article->toArray());
-        return $article->toArray();
+        //debug($article->toArray());
+        return view('articles.show', compact('article'));
     }
 
     /**
@@ -103,10 +112,12 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(\App\Article $article)
     {
-        return __METHOD__. '은(는) 다음 기본 키를 가진 Article 모델을 수정하기 위한 폼을 담은 
-                            뷰를 반환합니다.'.$id;
+        /*return __METHOD__. '은(는) 다음 기본 키를 가진 Article 모델을 수정하기 위한 폼을 담은
+                            뷰를 반환합니다.'.$id;*/
+        $this->authorize('update', $article);
+        return view('articles.edit', compact('article'));
     }
 
     /**
@@ -116,10 +127,15 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(\App\Http\Requests\ArticlesRequest $request, \App\Article $article)
     {
-        return __METHOD__. '은(는) 사용자의 입력한 폼 데이터로 다음기본 키를 가진 
-                            Article 모델을 수정합니다.' .$id;
+        /*return __METHOD__. '은(는) 사용자의 입력한 폼 데이터로 다음기본 키를 가진
+                            Article 모델을 수정합니다.' .$id;*/
+
+        $article->update($request->all());
+        flash()->success('수정하신 내용을 저장했습니다.');
+
+        return redirect(route('articles.show', $article->id));
     }
 
     /**
@@ -128,8 +144,13 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(\App\Article $article)
     {
-    return __METHOD__. '은(는) 다음 기본 키를 가진 Article 모델을 삭제합니다.' .$id;
+        error_log("!!!");
+        /*return __METHOD__. '은(는) 다음 기본 키를 가진 Article 모델을 삭제합니다.' .$id;*/
+       // $this->authorize('DELETE', $article);
+        $article->delete();
+
+        return response()->json([], 204);
     }
 }

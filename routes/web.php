@@ -22,24 +22,74 @@
     return view('welcome');
 });*/
 
-//Route::get('/', 'WelcomeController@index');
+Route::get('/', [
+    'as' => 'root',
+    'uses' => 'WelcomeController@index',
+]);
 
 Route::resource('articles', 'ArticlesController');
 
-Route::get('auth/login', function() {
+/* 사용자 가입 */
+Route::get('auth/register', [
+    'as' => 'users.create',
+    'uses' => 'UsersController@create'
+]);
 
-    $credentials = [
-        'email' => 'josh@gmail.com',
-        'password' => 'password'
-    ];
+Route::post('auth/register', [
+    'as' => 'users.store',
+    'uses' => 'UsersController@store'
+]);
 
-    if(! auth()->attempt($credentials)) {
+Route::get('auth/confirm/{code}', [
+    'as' => 'users.confirm',
+    'uses' => 'UsersController@confirm'
+])->where('code', '[\pL-\pN]{60}');
 
-        return '로그인 정보가 정확하지 않습니다.';
-    }
+/*사용자 인증*/
+Route::get('auth/login', [
 
-    return redirect('protected');
-});
+    'as' => 'sessions.create',
+    'uses' => 'SessionsController@create'
+]);
+
+Route::post('auth/login', [
+
+    'as' => 'sessions.store',
+    'uses' => 'SessionsController@store'
+]);
+
+Route::post('auth/logout', [
+
+    'as' => 'sessions.destroy',
+    'uses' => 'SessionsController@destroy'
+]);
+
+/*비밀번호 초기화*/
+Route::get('auth/remind', [
+
+    'as' => 'remind.create',
+    'uses' => 'PasswordsController@getRemind',
+]);
+
+Route::post('auth/remind', [
+
+    'as' => 'remind.store',
+    'uses' => 'PasswordsController@getRemind',
+]);
+
+Route::get('auth/reset/{token}', [
+
+    'as' => 'reset.create',
+    'uses' => 'PasswordsController@postRemind',
+]);
+
+Route::post('auth/reset', [
+
+    'as' => 'reset.store',
+    'uses' => 'PasswordsController@postReset',
+]);
+
+
 
 Route::get('protected', function() {
 
@@ -52,13 +102,6 @@ Route::get('protected', function() {
 
     return 'welcome'. auth()->user()->name;
 });
-
-Route::get('auth/logout', function() {
-    auth() -> logout();
-
-    return 'see you~';
-});
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -106,4 +149,7 @@ EOT;
 });
 
 Route::get('docs/{file?}', 'DocsController@show');
+
+Route::get('docs/images/{images}', 'DocsController@image')->
+    where('image', '[\pL-\pN\._-]+-img-[0-9]{2}.png');
 
