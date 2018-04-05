@@ -23,7 +23,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'confirm_code',
     ];
 
     protected $casts = [
@@ -39,6 +39,16 @@ class User extends Authenticatable
 
     public function isAdmin() {
 
-        return ($this->id ===1 ) ? ture : false;
+        return ($this->id === 1 ) ? true : false;
+    }
+
+    public function comments() {
+
+        return $this->hasMany(Comment::class);
+    }
+
+    public function votes() {
+
+        return $this->hasMany(Vote::class);
     }
 }

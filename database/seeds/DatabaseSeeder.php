@@ -60,5 +60,41 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->info('Seeded: article_tag table');
+
+        //최상위 댓글
+        $articles->each(function($article) {
+
+            $article->comments()->save(factory(App\Comment::class)->make());
+            $article->comments()->save(factory(App\Comment::class)->make());
+        });
+
+        //자식 댓글
+        $articles->each(function ($article) use ($faker) {
+
+            $commentIds = App\Comment::pluck('id')->toArray();
+
+            foreach (range(1, 5) as $index) {
+
+                $article->comments()->save(
+
+                    factory(App\Comment::class)->make([
+                        'parent_id' => $faker->randomElement($commentIds),
+                    ])
+                );
+            }
+        });
+
+        $this->command->info('Seeded: comments table');
+
+        $comments = App\Comment::all();
+
+        $comments->each(function ($comment) {
+
+            $comment->votes()->save(factory(App\Vote::class)->make());
+            $comment->votes()->save(factory(App\Vote::class)->make());
+            $comment->votes()->save(factory(App\Vote::class)->make());
+        });
+
+        $this->command->info('Seeded: votes table');
     }
 }

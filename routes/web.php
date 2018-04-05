@@ -159,3 +159,12 @@ Route::get('tags/{slug}/articles', [
     'uses' => 'ArticlesController@index'
 ]);
 
+Route::resource('comments', 'CommentsController', ['only' => ['update', 'destroy']]);
+Route::resource('articles.comments', 'CommentsController', ['only' => 'store']);
+
+Route::post('comments/{comment}/votes', [
+
+    'as' => 'comments.vote',
+    'uses' => 'CommentsController@vote',
+]);
+

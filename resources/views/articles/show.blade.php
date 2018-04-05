@@ -34,6 +34,10 @@
         <a href="{{ route('articles.index') }}" class="btn btn-default">
             <i class="glyphicon-list"></i> 글 목록
         </a>
+
+        <div class="container__comment">
+            @include('comments.index')
+        </div>
     </div>
 @stop
 
