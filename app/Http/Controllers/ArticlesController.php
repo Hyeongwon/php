@@ -18,9 +18,13 @@ class ArticlesController extends Controller
         $this->middleware('auth', ['except' =>['index', 'show']]);
     }
 
-    public function index()
+    public function index($slug = null)
     {
         //$articles = \App\Article::with('user')->get(); 즉시로드
+
+        $query = $slug
+            ? \App\Tag::whereSlug($slug)->firstorFail()->articles()
+            : new \App\Article;
         $articles = \App\Article::latest()->paginate(3);
 
         return view('articles.index', compact('articles'));
@@ -84,6 +88,7 @@ class ArticlesController extends Controller
            return back() -> with('flash_message', '글이 저장되지 않았습니다.')
                ->withInput();
        }
+       $article->tags()->sync($request->input('tags'));
        event(new \App\Events\ArticlesEvent($article));
        /*var_dump('이번트를 던집니다!');
        event(new \App\Events\ArticleCreated($article));
@@ -133,6 +138,7 @@ class ArticlesController extends Controller
                             Article 모델을 수정합니다.' .$id;*/
 
         $article->update($request->all());
+        $article->tags()->sync($request->input('tags'));
         flash()->success('수정하신 내용을 저장했습니다.');
 
         return redirect(route('articles.show', $article->id));

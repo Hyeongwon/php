@@ -16,6 +16,11 @@
         "jquery": "^3.2",
         "laravel-mix": "^1.0",
         "lodash": "^4.17.4",
+        "select2": "^4.0.6-rc.1",
+        "select2-bootstrap-css": "^1.4.6",
         "vue": "^2.5.7"
+    },
+    "dependencies": {
+        "gulp": "^3.9.1"
     }
 }

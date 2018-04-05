@@ -11,17 +11,28 @@
         </a>
     </div>
 
-    <article>
-        @forelse($articles as $article)
-            @include('articles.partial.article', compact('article'))
-        @empty
-            <p class="text-center text-danger">글이 없습니다.</p>
-        @endforelse
-    </article>
-
-    @if($articles->count())
-        <div class="text-center">
-            {!! $articles->appends(Request::except('page'))->render() !!}
+    <div class="row container__article">
+        <div class="col-md-3 sidebar__article">
+            <aside>
+                @include('tags.partial.index');
+            </aside>
         </div>
-    @endif
+        <div class="col-md-9 list__article">
+            <article>
+                @forelse($articles as $article)
+                    @include('articles.partial.article', compact('article'))
+                @empty
+                    <p class="text-center text-danger">
+                        {{ trans('forum.articles.empty') }}
+                    </p>
+                @endforelse
+            </article>
+
+            @if($articles->count())
+                <div class="text-center paginator__article">
+                    {!! $articles->appends(request()->except('page'))->render() !!}
+                </div>
+            @endif
+        </div>
+    </div>
 @stop

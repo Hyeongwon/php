@@ -153,3 +153,9 @@ Route::get('docs/{file?}', 'DocsController@show');
 Route::get('docs/images/{images}', 'DocsController@image')->
     where('image', '[\pL-\pN\._-]+-img-[0-9]{2}.png');
 
+Route::get('tags/{slug}/articles', [
+
+    'as' => 'tags.articles.index',
+    'uses' => 'ArticlesController@index'
+]);
+
