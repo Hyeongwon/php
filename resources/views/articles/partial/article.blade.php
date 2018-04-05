@@ -12,5 +12,9 @@
             <i class="fa fa-clock-o"></i> {{ $article->created_at->diffForHumans() }}
         </p>
         @include('tags.partial.list', ['tags' => $article->tags])
+
+        @if ($viewName === 'articles.index')
+            @include('attachments.partial.list', ['attachments' => $article->attachments])
+        @endif
     </div>
 </div>

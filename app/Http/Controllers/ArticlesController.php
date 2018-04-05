@@ -93,6 +93,24 @@ class ArticlesController extends Controller
        /*var_dump('이번트를 던집니다!');
        event(new \App\Events\ArticleCreated($article));
        var_dump('이번트를 던졌습니다.');*/
+
+       if( $request->hasFile('files')) {
+
+           $files = $request->file('files');
+
+           foreach ($files as $file) {
+               $filename = str_random().filter_var($file->getClientOriginalName(), FILTER_SANITIZE_URL);
+               $file->move(attachments_path(), $filename);
+
+               $article->attachments()->create([
+
+                   'filename' => $filename,
+                   'bytes' => $file -> getSize(),
+                   'mime' => $file -> getClientMimeType()
+               ]);
+           }
+       }
+
        return redirect(route('articles.index'))->with('flash_message', '작성하신 글이 저장 되었씁니다.');
     }
 

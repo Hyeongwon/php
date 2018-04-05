@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    @php $viewName = 'articles.index';@endphp
     <div class="page-header">
         <h4>포럼<small> / 글 목록</small></h4>
     </div>
