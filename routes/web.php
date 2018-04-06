@@ -22,10 +22,10 @@
     return view('welcome');
 });*/
 
-Route::get('/', [
-    'as' => 'root',
-    'uses' => 'WelcomeController@index',
-]);
+//Route::get('/', [
+//    'as' => 'root',
+//    'uses' => 'WelcomeController@index',
+//]);
 
 Route::resource('articles', 'ArticlesController');
 

@@ -18,17 +18,38 @@ class ArticlesController extends Controller
         $this->middleware('auth', ['except' =>['index', 'show']]);
     }
 
-    public function index($slug = null)
+    public function index(Request $request, $slug = null)
     {
         //$articles = \App\Article::with('user')->get(); 즉시로드
 
         $query = $slug
             ? \App\Tag::whereSlug($slug)->firstorFail()->articles()
             : new \App\Article;
-        $articles = \App\Article::latest()->paginate(3);
 
-        return view('articles.index', compact('articles'));
+        $query = $query->orderBy(
+
+            $request->input('sort', 'created_at'),
+            $request->input('order', 'desc')
+        );
+
+        if($keyword = request()->input('q')) {
+
+            $raw = 'MATCH(title, content) AGAINST(? IN BOOLEAN MODE)';
+            $query = $query->whereRaw($raw, [$keyword]);
+        }
+
+        $articles = $query->paginate(3);
+
+        //return view('articles.index', compact('articles'));
+        return $this->respondCollection($articles);
+        //return view('articles.index', compact('articles'));
         //return __METHOD__ . '은(는) Article 컬렉션을 조회합니다.';
+    }
+
+    protected function respondCollection(\Illuminate\Contracts\Pagination\
+                                         LengthAwarePaginator $articles) {
+
+        return view('articles.index', compact($articles));
     }
 
     /**
@@ -82,7 +103,7 @@ class ArticlesController extends Controller
 
        //$article = \App\User::find(1)->articles()->create($request->all());
         $article = $request->user()->articles()->create($request->all());
-
+        //$article = \App\User::find(1)->articles()->create($payload);
        if(! $article) {
 
            return back() -> with('flash_message', '글이 저장되지 않았습니다.')
@@ -111,7 +132,15 @@ class ArticlesController extends Controller
            }
        }
 
-       return redirect(route('articles.index'))->with('flash_message', '작성하신 글이 저장 되었씁니다.');
+       //return redirect(route('articles.index'))->with('flash_message', '작성하신 글이 저장 되었씁니다.');
+        return $this->respondCreated($article);
+    }
+
+    protected function respondCreated(\App\Article $article) {
+
+        flash()->success(trans('forum.articles.success_writing'));
+
+        return redirect(route('articles.show', $article->id));
     }
 
     /**
@@ -126,6 +155,9 @@ class ArticlesController extends Controller
 
         //return __METHOD__. '은(는) 다음 기본 키를 가진 Article 모델을 조회합니다.'. $id;
         //debug($article->toArray());
+
+        $article->view_count += 1;
+        $article->save();
 
         $comments = $article->comments()->with('replies')->whereNull('parent_id')->
             latest()->get();

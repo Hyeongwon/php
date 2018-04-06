@@ -19,7 +19,7 @@ class CommentsController extends Controller
             $request->all(),
             ['user_id' => $request->user()->id]
         ));
-
+        event(new \App\Events\CommentsEvent($comment));
         flash()->success('작성하신 댓글을 저장했습니다.');
 
         return redirect(route('articles.show', $article->id).'#comment_'.$comment->id);

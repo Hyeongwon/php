@@ -21,8 +21,9 @@ class AppServiceProvider extends ServiceProvider
                 return \App\Tag::all();
             });
 
-            $view->with(compact('allTags'));
-            $view->with('currentUser', auth()->user());
+            $currentUser = auth()->user();
+            //$sortCols = config('project.sorting');
+            $view->with(compact('allTags', 'currentUser'));
         });
     }
 

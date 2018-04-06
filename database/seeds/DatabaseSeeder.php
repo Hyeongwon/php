@@ -96,5 +96,21 @@ class DatabaseSeeder extends Seeder
         });
 
         $this->command->info('Seeded: votes table');
+
+        foreach (range(1, 10) as $index) {
+
+            $path = $faker->image(attachments_path());
+            $filename = File::basename($path);
+            $bytes = File::size($path);
+            $mime = File::mimeType($path);
+            $this->command->warn("File saved: {$filename}");
+
+            factory(App\Attachment::class)->create([
+               'filename' => $filename,
+               'bytes' => $bytes,
+                'mime' => $mime,
+                'created_at' => $faker->dateTimeBetween('-1 month'),
+            ]);
+        }
     }
 }

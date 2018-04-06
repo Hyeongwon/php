@@ -10,6 +10,12 @@
         <p class="text-muted meta__article">
             <i class="fa fa-user"></i> {{ $article->user->name }}
             <i class="fa fa-clock-o"></i> {{ $article->created_at->diffForHumans() }}
+
+            •조회수 {{ $article->view_count }}
+
+            @if($article->commnent_count > 0)
+                • 댓글 {{$article->comment_count }}
+            @endif
         </p>
         @include('tags.partial.list', ['tags' => $article->tags])
 
